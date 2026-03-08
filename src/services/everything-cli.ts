@@ -25,7 +25,8 @@ export async function searchFilesWithCLI(searchText: string, preferences: Prefer
     const cliArgs = `${customCliArgs?.trim() || ""}${useRegex ? " -r" : ""}`;
 
     // Use es.exe with CSV output format to get file info in one call
-    const command = `chcp 65001 > nul && "${esCommand}" -csv -n ${maxResultsCount} -name -filename-column -size -date-created -date-modified ${defaultSort} ${cliArgs} ${searchText}`;
+    // Note: Use >nul 2>&1 to suppress chcp output properly (avoids null device issues on some systems)
+    const command = `chcp 65001 >nul 2>&1 && "${esCommand}" -csv -n ${maxResultsCount} -name -filename-column -size -date-created -date-modified ${defaultSort} ${cliArgs} ${searchText}`;
 
     const { stdout } = await execAsync(command);
 
